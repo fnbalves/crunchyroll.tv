@@ -1,5 +1,5 @@
 #!/bin/bash
 sh ./build.sh
-sh ./install.sh
-sh ./launch.sh
-sh ./inspect.sh
+sh ./install.sh $1
+sh ./launch.sh $1
+sh ./inspect.sh $1
