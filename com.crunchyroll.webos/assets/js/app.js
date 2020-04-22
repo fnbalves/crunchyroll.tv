@@ -335,9 +335,10 @@ function App() {
     }
 
     this.menu = function (keyCode) {
-        if (loadingData) {
+        /*if (loadingData) {
+            console.log('Im loading data');
             return;
-        }
+        }*/
         this.openMenu();
 
         switch (keyCode) {
@@ -552,7 +553,7 @@ function App() {
         var locale = document.querySelector("#login_locale").value;
         this.locale(locale);
         //create cr instance
-        cr = new Crunchyroll("Scwg9PRRZ19iVwD", "com.crunchyroll.crunchyroid", this.deviceid(), locale);
+        cr = new Crunchyroll("WveH9VkPLrXvuNm", "com.crunchyroll.crunchyroid", this.deviceid(), locale);
 
         var login_email = document.querySelector("#login_email");
         var login_password = document.querySelector("#login_password");
@@ -689,7 +690,8 @@ function App() {
             var thumb = document.createElement("a");
             thumb.classList.add("thumb");
 
-            thumb.setAttribute("href", "javascript:app.open('" + serie.series_id + "')");
+            thumb.setAttribute("href", "javascript:app.open('" + i + "')");
+            //thumb.setAttribute("href", "javascript:app.open()");
 
             var thumbText = document.createElement("span");
             thumbText.innerText = serie.name;
@@ -702,6 +704,12 @@ function App() {
             wrapper.appendChild(thumb);
         }
     }
+
+    this.open = function(id){
+        menu_right_list.select(id);
+        menu_right_list.open();
+    }
+
     this.displayAnimes = function (title, animes, append) {
 
         var wrapper = document.querySelector("#menu #episodes .wrapper");
