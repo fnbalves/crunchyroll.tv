@@ -10,14 +10,17 @@ var key = {
     LEFT: 37,
     UP: 38,
     DOWN: 40,
-    INFO: 457
+    INFO: 457 
 };
+
+var searchBar =  document.querySelector("#search_bar");
 
 function App() {
     var self = this;
     var menuIsShowing = true;
     var loadingData = false;
     var cr = null;
+    var isWritingSearch = false;
 
     var menu_tab_list = {
         selected: 0,
@@ -28,7 +31,7 @@ function App() {
             menu_tab_list.select(menu_tab_list.selected + 1);
         },
         select: function(index){
-            if(index < 0 || index > 1 || menu_tab_list.selected == index){
+            if(index < 0 || index > 2 || menu_tab_list.selected == index){
                 return;
             }
         
@@ -42,13 +45,22 @@ function App() {
             menu_tab_list.selected = index;
             loadingData = true;
             if(index === 0){
+                searchBar.hidden = true;
                 Promise.all([self.listLastUpdated(), self.listPopular()]).then(function(){
                     loadingData = false;
                 });
-            }else{
+            }else if(index === 1){
+                searchBar.hidden = true;
                 self.listHistory().then(function(){
                     loadingData = false;
                 });
+            }else if(index == 2){
+                console.log('Making appear');
+                searchBar.hidden = false;
+                console.log('WHo has focus');
+                console.log(document.activeElement);
+                searchBar.focus();
+                isWritingSearch = true;
             }
         }
     }
@@ -309,6 +321,11 @@ function App() {
             //info
             this.menu(key.INFO);
         } else if (e.keyCode == key.BACK) {
+             if(isWritingSearch){
+                 this.exitSearchFocus(false);
+                 isWritingSearch = false;
+             }
+
              if (this.hasPlayedSomething) {
 
                 //double back button
@@ -326,6 +343,7 @@ function App() {
                         } 
                     }, 500);
                 }
+                
             } else {
                 webOS.platformBack();
             }
@@ -782,6 +800,7 @@ function App() {
                         return;
                     }
                     var title = (self.locale() == "ptBR" || self.locale() == "ptPT" ? "Transmissão Simultânea" : "Simulcast");
+                    
                     self.displaySeries(title, series.data);
                     resolve(series.data);
                 });
@@ -845,9 +864,41 @@ function App() {
             cr.checkCaches();
         }
     }
+
+    this.exitSearchFocus = function(has_data){
+        console.log(menu_tab_list.selected);
+        console.log(menu_right_list.selected);
+        console.log(menu_left_list.selected);
+
+        document.activeElement.blur();
+
+        if(has_data){
+            menu_right_list.select(0);
+        }
+
+        this.openMenu();
+        isWritingSearch = false;
+    }
 }
 
 var app = new App();
+
+//set events for search bar
+searchBar.addEventListener("keyup", function(event) {
+    console.log(event.keyCode);
+
+    if (event.keyCode === 13) {
+      var searchTerm = searchBar.value;
+      console.log('Was entered', searchTerm);
+      app.search(searchTerm).then(function(data){
+            var title = (app.locale() == "ptBR" || app.locale() == "ptPT" ? "Títulos relacionados" : "Related titles");        
+            app.displaySeries(title, data);
+            console.log(data);
+
+            app.exitSearchFocus(data.length > 0);
+      });
+    }
+});
 
 //set in cache locale
 login_locale.value = app.locale();
