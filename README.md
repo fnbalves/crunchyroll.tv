@@ -1,7 +1,7 @@
 # crunchyroll.tv
-WebOS app for crunchyroll
+WebOS app for crunchyroll (Fork)
 
-Support me for future versions for Samsung, Android TV, Chromecast:
+Support the original author for future versions for Samsung, Android TV, Chromecast:
 
 [![BMC](https://cdn.buymeacoffee.com/buttons/default-orange.png)](https://www.buymeacoffee.com/i2yBGw7)
 
